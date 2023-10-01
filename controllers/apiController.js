@@ -1,7 +1,6 @@
 const debug = require("debug")("dexpressapi:server");
 const dexpress = require("../models/dexpress");
 
-
 exports.getTally = async (req,res)=>{
     debug("IN apiController.js getTally");
     try{
