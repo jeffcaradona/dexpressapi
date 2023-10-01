@@ -4,6 +4,9 @@ const debug = require("debug")("dexpressapi:server");
 
 const apiController = require('../controllers/apiController');
 
+router.get("/all", apiController.getKeysAndTally);
+
+
 // http://localhost:8080/api/tally/ZeroOrOne/0/MaxN/100
 router.get("/tally/ZeroOrOne/:ZeroOrOne/MaxN/:MaxN", apiController.getTally);
 // http://localhost:8080/api/tally?ZeroOrOne=0&MaxN=5

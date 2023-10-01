@@ -1,11 +1,12 @@
 const debug = require("debug")("dexpressapi:server");
 const { connectionPool, mssql } = require("./db");
 
+
+
 exports.selectKeys = async (key) => {
   debug("IN dexpress.execTally(params)");
   let data = {};
-
-
+  data["qryKeys"] = {};
   const strWhereClause = (key)?`WHERE [key] = @key`:'';
 
   try {
@@ -17,14 +18,18 @@ exports.selectKeys = async (key) => {
         `SELECT [key],[utc_ts] FROM [dbo].[VOURDATA] ${strWhereClause} GROUP BY [key], [utc_ts] ORDER BY [utc_ts] DESC`
       );
     debug(result);
-
-    data["qryKeys"] = result.recordset;
-    data["returnValue"] = result.returnValue;
+    
+    data["qryKeys"].recordset = result.recordset;
+    data["qryKeys"].returnValue = result.returnValue;
 
     return data;
+
   } catch (error) {
     debug(error);
-    return error;
+      data["qryKeys"].recordset = [];
+      data["qryKeys"].error = error.message;
+      data["qryKeys"].returnValue = 1;
+    return data;
   }
 };
 
@@ -32,6 +37,7 @@ exports.selectKeys = async (key) => {
 exports.execTally = async (params) => {
   debug("IN dexpress.execTally(params)");
   let data = {};
+  data["qryTally"] = {};
   try {
     const connection = await connectionPool;
     const result = await connection
@@ -40,13 +46,17 @@ exports.execTally = async (params) => {
       .input("MaxN", mssql.BigInt, params.MaxN)
       .execute("dbo.spTally");
     debug(result);
-
-    data["qryTally"] = result.recordset;
-    data["returnValue"] = result.returnValue;
+    
+    data["qryTally"].recordset = result.recordset;
+    data["qryTally"].returnValue = result.returnValue;
 
     return data;
   } catch (error) {
     debug(error);
-    return error;
+    data["qryTally"] = {};
+    data["qryTally"].recordset = [];
+    data["qryTally"].error = error.message;
+    data["qryTally"].returnValue = 1;
+    return data;
   }
 };
