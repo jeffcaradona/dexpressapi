@@ -53,7 +53,7 @@ exports.execTally = async (params) => {
     return data;
   } catch (error) {
     debug(error);
-    data["qryTally"] = {};
+    
     data["qryTally"].recordset = [];
     data["qryTally"].error = error.message;
     data["qryTally"].returnValue = 1;
