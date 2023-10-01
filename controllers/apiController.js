@@ -1,35 +1,42 @@
 const debug = require("debug")("dexpressapi:server");
 const dexpress = require("../models/db/dexpress");
 
+exports.getThreeRecordSets = async  (req, res) => {
+  try {
+    const result = await dexpress.execThreeRecordSets();
+    debug(result);
+    res.json(result);
+  } catch (e) {
+    res.status(500);
+    res.json({ message: e.message });
+  }
+};
 
 exports.getKeysAndTally = (req, res) => {
   debug("IN apiController.js getKeysAndTally");
-  const key = req.params.key ? req.params.key : "";
+  const key = req.params.key ? req.params.key : req.query.key;
   const params = { ...req.query, ...req.params };
-  
-  let promises = [];
-  let output = {};
 
+  let promises = [];
   promises.push(dexpress.selectKeys(key));
   promises.push(
     dexpress.execTally({ ZeroOrOne: params.ZeroOrOne, MaxN: params.MaxN })
   );
 
+  
+  let data = {};
   Promise.allSettled(promises)
-    .then((results) => {
-      results.forEach((result) => {
-        Object.assign(output, result.value);
+    .then((outputs) => {
+      outputs.forEach((output, index) => {        
+        data[output.value.name] = output.value;      
       });
-
-      res.json(output);
+      res.json(data);
     })
     .catch((error) => {
       res.status(500);
-      res.json({ message: e.message });
+      res.json({ message: error.message });
     });
 };
-
-
 
 exports.getKeys = async (req, res) => {
   debug("IN apiController.js getKeys");
@@ -52,6 +59,7 @@ exports.getTally = async (req, res) => {
   try {
     const params = { ...req.query, ...req.params };
     //Validate Inputs
+    
     const result = await dexpress.execTally(params);
     debug(result);
     res.json(result);

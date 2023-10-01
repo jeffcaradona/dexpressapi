@@ -4,8 +4,12 @@ const debug = require("debug")("dexpressapi:server");
 
 const apiController = require('../controllers/apiController');
 
-router.get("/all", apiController.getKeysAndTally);
 
+
+router.get("/three", apiController.getThreeRecordSets);
+
+//http://localhost:8080/api/tallykeys?ZeroOrOne=1&MaxN=10000
+router.get("/tallykeys", apiController.getKeysAndTally);
 
 // http://localhost:8080/api/tally/ZeroOrOne/0/MaxN/100
 router.get("/tally/ZeroOrOne/:ZeroOrOne/MaxN/:MaxN", apiController.getTally);
@@ -20,8 +24,7 @@ router.get("/keys", apiController.getKeys);
 
 
 router.get('/', (req,res)=>{
-    debug('IN apiRoutesV0.js get("/") callback');
-    console.info("query", req.query);
+    debug('IN apiRoutesV0.js get("/") callback');    
 
     res.json({ query: req.query, endpoint: "\\api", returnValue:0 });
 
