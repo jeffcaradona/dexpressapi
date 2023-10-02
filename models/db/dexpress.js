@@ -1,11 +1,11 @@
 const debug = require("debug")("dexpressapi:server");
 const { connectionPool, mssql } = require("./db");
-
 const utils = require('./utils');
+
+const connection = connectionPool;
 
 exports.execThreeRecordSets = async()=>{
   debug("IN dexpress.execThreeRecordSets()");
-  
 
   let output = {};  
   output.rsList = ["qryRptElementA", "qryRptElementB", "qryRptElementC"];
@@ -47,6 +47,7 @@ exports.selectKeys = async (key) => {
   try {
     const connection = await connectionPool;
     
+    // TODO - Build 
     const result = await connection
       .request()
       .input("key", mssql.VarChar, key)
@@ -96,4 +97,3 @@ exports.execTally = async (params) => {
   }
 };
 
-const connection = connectionPool;

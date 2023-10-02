@@ -1,24 +1,17 @@
 const debug = require("debug")("dexpressapi:server");
 const dexpress = require("../models/db/dexpress");
 
-exports.getThreeRecordSets = async  (req, res) => {
-  try {
-    const result = await dexpress.execThreeRecordSets();
-    debug(result);
-    res.json(result);
-  } catch (e) {
-    res.status(500);
-    res.json({ message: e.message });
-  }
-};
+
 
 exports.getKeysAndTally = (req, res) => {
   debug("IN apiController.js getKeysAndTally");
   const key = req.params.key ? req.params.key : req.query.key;
   const params = { ...req.query, ...req.params };
-
+  // Create a promises Array
   let promises = [];
+  // Push the first proise
   promises.push(dexpress.selectKeys(key));
+  // Push the second proise
   promises.push(
     dexpress.execTally({ ZeroOrOne: params.ZeroOrOne, MaxN: params.MaxN })
   );
@@ -36,6 +29,18 @@ exports.getKeysAndTally = (req, res) => {
       res.status(500);
       res.json({ message: error.message });
     });
+};
+
+
+exports.getThreeRecordSets = async  (req, res) => {
+  try {
+    const result = await dexpress.execThreeRecordSets();
+    debug(result);
+    res.json(result);
+  } catch (e) {
+    res.status(500);
+    res.json({ message: e.message });
+  }
 };
 
 exports.getKeys = async (req, res) => {
